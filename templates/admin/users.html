@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Користувачі | Admin{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1">👥 Користувачі</h1>
+        <p class="text-muted mb-0">Всього: {{ users|length }}</p>
+    </div>
+    <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_dashboard') }}">← Dashboard</a>
+</div>
+<div class="card soft-card p-3">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nickname</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Дата реєстрації</th>
+                    <th class="text-end">Дія</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td class="text-muted">#{{ user.id }}</td>
+                    <td>
+                        <strong>{{ user.nickname }}</strong>
+                        {% if user.id == current_user.id %}
+                            <span class="badge bg-secondary ms-1">Ви</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ user.email }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                            <span class="badge bg-warning text-dark">Admin</span>
+                        {% else %}
+                            <span class="badge bg-secondary">User</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small">{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td class="text-end">
+                        {% if user.id != current_user.id %}
+                        <form method="post" action="{{ url_for('admin_toggle_user', user_id=user.id) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm {% if user.is_admin %}btn-danger{% else %}btn-outline-light{% endif %}">
+                                {{ 'Зняти admin' if user.is_admin else 'Зробити admin' }}
+                            </button>
+                        </form>
+                        {% else %}
+                            <span class="text-muted small">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Користувачів немає.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | Online Restaurant{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">⚙️ Admin Dashboard</h1>
+        <p class="text-muted mb-0">Керування сайтом ресторану</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_menu') }}">📋 Меню</a>
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_orders') }}">🛒 Замовлення</a>
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_reservations') }}">📅 Бронювання</a>
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin_users') }}">👥 Користувачі</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <a href="{{ url_for('admin_users') }}" class="text-decoration-none">
+            <div class="card soft-card p-4 text-center stat-card">
+                <div class="stat-icon">👥</div>
+                <h3 class="mb-1">{{ users_count }}</h3>
+                <p class="mb-0 text-muted">Користувачів</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ url_for('admin_menu') }}" class="text-decoration-none">
+            <div class="card soft-card p-4 text-center stat-card">
+                <div class="stat-icon">📋</div>
+                <h3 class="mb-1">{{ menu_count }}</h3>
+                <p class="mb-0 text-muted">Позицій меню</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ url_for('admin_orders') }}" class="text-decoration-none">
+            <div class="card soft-card p-4 text-center stat-card">
+                <div class="stat-icon">🛒</div>
+                <h3 class="mb-1">{{ orders_count }}</h3>
+                <p class="mb-0 text-muted">Замовлень</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ url_for('admin_reservations') }}" class="text-decoration-none">
+            <div class="card soft-card p-4 text-center stat-card">
+                <div class="stat-icon">📅</div>
+                <h3 class="mb-1">{{ reservations_count }}</h3>
+                <p class="mb-0 text-muted">Бронювань</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card soft-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">🛒 Останні замовлення</h4>
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-light">Всі</a>
+            </div>
+            {% for order in latest_orders %}
+                <div class="border-bottom border-secondary-subtle py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ order.order_list.get('name', 'Замовлення #' ~ order.id) }}</strong>
+                        <div class="text-muted small">
+                            {{ order.user.nickname if order.user else '—' }} •
+                            {{ order.order_time.strftime('%d.%m %H:%M') }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold">{{ order.total_price }} грн</div>
+                        <span class="badge status-badge">{{ order.status }}</span>
+                    </div>
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">Поки немає замовлень.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card soft-card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">📅 Останні бронювання</h4>
+                <a href="{{ url_for('admin_reservations') }}" class="btn btn-sm btn-outline-light">Всі</a>
+            </div>
+            {% for item in latest_reservations %}
+                <div class="border-bottom border-secondary-subtle py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ item.type_table }}</strong>
+                        <div class="text-muted small">
+                            {{ item.user.nickname if item.user else '—' }} • {{ item.guests }} гостей
+                        </div>
+                    </div>
+                    <div class="text-muted small text-end">
+                        {{ item.time_start.strftime('%d.%m.%Y') }}<br>
+                        {{ item.time_start.strftime('%H:%M') }}
+                    </div>
+                </div>
+            {% else %}
+                <p class="mb-0 text-muted">Поки немає бронювань.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
