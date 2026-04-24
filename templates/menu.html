@@ -1,0 +1,72 @@
+
+{% extends "base.html" %}
+{% block title %}Меню{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Меню</h1>
+        <p class="text-muted mb-0">Оберіть категорію та додайте страви до замовлення</p>
+    </div>
+</div>
+
+<div class="card soft-card p-3 mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label">Категорія</label>
+            <select class="form-select" name="category">
+                <option value="all" {% if active_category == 'all' %}selected{% endif %}>Усі</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if active_category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label class="form-label">Сортування</label>
+            <select class="form-select" name="sort">
+                <option value="popular" {% if active_sort == 'popular' %}selected{% endif %}>Популярні</option>
+                <option value="price_asc" {% if active_sort == 'price_asc' %}selected{% endif %}>Ціна ↑</option>
+                <option value="price_desc" {% if active_sort == 'price_desc' %}selected{% endif %}>Ціна ↓</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Застосувати</button>
+        </div>
+    </form>
+</div>
+
+<div class="row g-4">
+    {% for dish in dishes %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card soft-card h-100 overflow-hidden">
+            <img src="{{ url_for('static', filename='menu/' ~ (dish.file_name or 'placeholder.svg')) }}" class="card-img-top home-card-img" alt="{{ dish.name }}">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ dish.name }}</h5>
+                <p class="text-muted mb-2">{{ dish.category }}{% if dish.weight %} • {{ dish.weight }}{% endif %}</p>
+                <p class="card-text">{{ dish.description or dish.ingredients }}</p>
+                <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <strong>{{ dish.price }} грн</strong>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <form method="post" action="{{ url_for('add_order') }}" class="d-flex gap-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                        <input class="form-control" type="number" min="1" value="1" name="quantity" style="max-width: 90px;">
+                        <button class="btn btn-primary flex-grow-1">Замовити</button>
+                    </form>
+                    {% else %}
+                        <a class="btn btn-primary w-100" href="{{ url_for('login') }}">Увійдіть, щоб замовити</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="card soft-card p-4 text-center">
+            <p class="mb-0">Страв не знайдено.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

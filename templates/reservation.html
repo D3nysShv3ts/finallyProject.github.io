@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% block title %}Бронювання{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card soft-card p-4">
+            <h1 class="mb-4">Бронювання столика</h1>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label">Дата і час</label>
+                    <input class="form-control" type="datetime-local" name="time_start" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Тип столика</label>
+                    <select class="form-select" name="type_table" required>
+                        {% for option in table_options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Кількість гостей</label>
+                    <input class="form-control" type="number" min="1" value="2" name="guests" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Коментар</label>
+                    <textarea class="form-control" name="comment" rows="4" placeholder="Побажання до бронювання"></textarea>
+                </div>
+                <button class="btn btn-primary w-100">Забронювати</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+
+{% extends "base.html" %}
+{% block title %}Реєстрація{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card soft-card p-4">
+            <h2 class="mb-4">Реєстрація</h2>
+            <form method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label">Nickname</label>
+                    <input class="form-control" type="text" name="nickname" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" type="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input class="form-control" type="password" name="password" required>
+                </div>
+                <button class="btn btn-primary w-100">Створити акаунт</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
